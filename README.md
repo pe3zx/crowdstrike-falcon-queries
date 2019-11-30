@@ -8,7 +8,7 @@ Developed and maintained by [Intelligent Response](https://www.i-secure.co.th/au
 
 - [Execution of Renamed Executables](#execution-of-renamed-executables)
 - [List of Living Off The Land Binaries with Network Connections](#list-of-living-off-the-land-binaries-with-network-connections)
-- [Suspicious Network Connections from Processes](#suspicious-network-connections from processes)
+- [Suspicious Network Connections from Processes](#suspicious-network-connections-from-processes)
 - [Suspicious PowerShell Process, Spawned from Explorer, with Network Connections](#suspicious-powershell-process-spawned-from-explorer-with-network-connections)
 
 ## Execution of Renamed Executables
