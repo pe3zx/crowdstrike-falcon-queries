@@ -10,7 +10,7 @@ Developed and maintained by [Intelligent Response](https://www.i-secure.co.th/au
 
 ## Execution of Renamed Executables
 
-This query is inspired by [Red Canary's research]([Black Hat: Detecting the unknown and disclosing a new attack technique at Black Hat 2019](https://redcanary.com/blog/black-hat-detecting-the-unknown-and-disclosing-a-new-attack-technique/). For explanation in Thai, please find in [our blog](https://www.i-secure.co.th/2019/11/practicing-threat-hunting-skills-with-crowdstrike-events-app/).
+This query is inspired by [Red Canary's research](https://redcanary.com/blog/black-hat-detecting-the-unknown-and-disclosing-a-new-attack-technique/). For explanation in Thai, please find in [our blog](https://www.i-secure.co.th/2019/11/practicing-threat-hunting-skills-with-crowdstrike-events-app/).
 
 Idea:
 
