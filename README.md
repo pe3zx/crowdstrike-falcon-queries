@@ -12,6 +12,7 @@ Developed and maintained by [Intelligent Response](https://www.i-secure.co.th/au
   - [Suspicious Network Connections from Processes](#suspicious-network-connections-from-processes)
   - [Suspicious PowerShell Process, Spawned from Explorer, with Network Connections](#suspicious-powershell-process-spawned-from-explorer-with-network-connections)
   - [Threat Hunting #1 - RDP Hijacking traces - Part 1](#threat-hunting-1---rdp-hijacking-traces---part-1)
+  - [Threat Hunting #2 - Detecting PsLoggedOn exec using EID 5145](#threat-hunting-2---detecting-psloggedon-exec-using-eid-5145)
 
 ## Execution of Renamed Executables
 
@@ -98,10 +99,16 @@ event_simpleName="DnsRequest"
 
 This query is inspired by [MENASEC's research](https://blog.menasec.net/2019/02/of-rdp-hijacking-part1-remote-desktop.html).
 
-CrowdStrike has an event category named `RegSystemConfigValueUpdate` for this kind of behavior. However, `LastLoggedOnUser` and `LastLoggedOnSAMUser` aren't considered a system config. So, we can find only an attempt to edit `RDP-Tcp\PortNumber` only.
+CrowdStrike has an event category named `RegSystemConfigValueUpdate` for this kind of behavior. However, `LastLoggedOnUser` and `LastLoggedOnSAMUser` aren't considered a system config. So, we can find an attempt to edit `RDP-Tcp\PortNumber` only.
 
 ```
 event_simpleName="RegSystemConfigValueUpdate" AND RegObjectName="*\RDP-Tcp" AND RegValueName="PortNumber" 
 | rename RegNumericValue_decimal as "NewRDPPort"
 | table timestamp, ComputerName, NewRDPPort
 ```
+
+## Threat Hunting #2 - Detecting PsLoggedOn exec using EID 5145
+
+This query is inspired by [MENASEC's research](https://blog.menasec.net/2019/02/threat-hunting-detecting-psloggedon.html)
+
+*No events related to this activity*
