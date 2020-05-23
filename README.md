@@ -6,10 +6,12 @@ A collection of Splunk's Search Processing Language (SPL) for Threat Hunting wit
 
 Developed and maintained by [Intelligent Response](https://www.i-secure.co.th/author/intelligentresponse/) team, i-secure co., Ltd.
 
-- [Execution of Renamed Executables](#execution-of-renamed-executables)
-- [List of Living Off The Land Binaries with Network Connections](#list-of-living-off-the-land-binaries-with-network-connections)
-- [Suspicious Network Connections from Processes](#suspicious-network-connections-from-processes)
-- [Suspicious PowerShell Process, Spawned from Explorer, with Network Connections](#suspicious-powershell-process-spawned-from-explorer-with-network-connections)
+- [crowdstrike-falcon-queries](#crowdstrike-falcon-queries)
+  - [Execution of Renamed Executables](#execution-of-renamed-executables)
+  - [List of Living Off The Land Binaries with Network Connections](#list-of-living-off-the-land-binaries-with-network-connections)
+  - [Suspicious Network Connections from Processes](#suspicious-network-connections-from-processes)
+  - [Suspicious PowerShell Process, Spawned from Explorer, with Network Connections](#suspicious-powershell-process-spawned-from-explorer-with-network-connections)
+  - [Threat Hunting #1 - RDP Hijacking traces - Part 1](#threat-hunting-1---rdp-hijacking-traces---part-1)
 
 ## Execution of Renamed Executables
 
@@ -17,7 +19,7 @@ This query is inspired by [Red Canary's research](https://redcanary.com/blog/bla
 
 Idea:
 
-- Identify if there are any events with file renaming activity — found that CrowdStrike Falcon already had a specific field name for executables, `NewExecutableRenamed`.
+- Identify if there are any events with file renaming activity ï¿½ found that CrowdStrike Falcon already had a specific field name for executables, `NewExecutableRenamed`.
 - Correlate `TargetFileName` field on `NewExecutableRenamed` event with a filename available on `ImageFileName` field on `ProcessRollup2` event.
 - Create a result table with `ComputerName`, `timestamp`, `ImageFileName`, and `CommandLine` as columns.
 
@@ -35,7 +37,7 @@ This query is inspired by [Red Canary's research](https://redcanary.com/blog/bla
 
 Idea:
 
-- Identify if there are any events relating to network activity — found that CrowdStrike Falcon has `DnsRequest` and `NetworkConnectIP4` events. We’re going to use the `DnsRequest` event in this query.
+- Identify if there are any events relating to network activity ï¿½ found that CrowdStrike Falcon has `DnsRequest` and `NetworkConnectIP4` events. Weï¿½re going to use the `DnsRequest` event in this query.
 - Correlate `ContextProcessId` field from `DnsRequest` event with `TargetProcessId` on `ProcessRollup2` event.
 - Create a sub-search to filter only known LOLBas files.
 - Create a result table with `ComputerName`, `timestamp`, `ImageFileName`, and `CommandLine` as columns. 
@@ -90,4 +92,16 @@ event_simpleName="DnsRequest"
     | join ParentProcessId_decimal 
         [ search event_simpleName="ProcessRollup2" FileName="powershell.exe" ]] 
 | table ComputerName timestamp ImageFileName DomainName CommandLine
+```
+
+## Threat Hunting #1 - RDP Hijacking traces - Part 1
+
+This query is inspired by [MENASEC's research](https://blog.menasec.net/2019/02/of-rdp-hijacking-part1-remote-desktop.html).
+
+CrowdStrike has an event category named `RegSystemConfigValueUpdate` for this kind of behavior. However, `LastLoggedOnUser` and `LastLoggedOnSAMUser` aren't considered a system config. So, we can find only an attempt to edit `RDP-Tcp\PortNumber` only.
+
+```
+event_simpleName="RegSystemConfigValueUpdate" AND RegObjectName="*\RDP-Tcp" AND RegValueName="PortNumber" 
+| rename RegNumericValue_decimal as "NewRDPPort"
+| table timestamp, ComputerName, NewRDPPort
 ```
